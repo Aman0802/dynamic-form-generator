@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Formik,
   Form as FormikForm,
@@ -56,6 +56,111 @@ export function SelectField(props) {
         render={(msg) => <div style={{ color: "red" }}>{msg}</div>}
       />
     </>
+  );
+}
+
+function ListItem(props){
+  const {key , index, className , value, selected, selectedIndexesCallback}=props;
+  const [itemselected , setItemSelected] = useState(selected);
+
+  const handleClick=()=> {
+    if (typeof selectedIndexesCallback === 'function') {
+      selectedIndexesCallback(index);
+    }
+    setItemSelected(!itemselected)
+  }
+  return(
+    <div>
+      <li
+        onClick={()=>handleClick()}
+        className={className}>
+        {value}
+      </li>
+    </div>
+  );
+}
+
+export function MultiSelectField(props){
+  const { dropDownLabel,  optionsData} = props;
+  const [showMultiSelectBox , setShowMultiSelectBox]  = useState(false);
+  const [selectedIndexes , setselectedIndexes] = useState([]);
+  const [optionsValue , setOptionsValue] = useState(optionsData);
+
+  const selectedIndexesCallback=(selectedIndex) =>{
+    if (selectedIndexes !== null) {
+      let tmpselectedIndexes = (selectedIndexes.indexOf(selectedIndex) !== -1) ?
+        selectedIndexes.filter((i) => {
+          return i !== selectedIndex;
+        }) : [...selectedIndexes, selectedIndex];
+        setselectedIndexes(tmpselectedIndexes);
+    }
+  }
+
+  const getOptions=()=> {
+    const optionsList = optionsValue;
+    if (optionsList !== undefined && optionsList !== null) {
+      return optionsList.map((option, i) => {
+        let selected = false;
+        if (selectedIndexes !== null) {
+          for (let j of selectedIndexes) {
+            if (j === i) {
+              selected = true;
+            }
+          }
+        }
+        return (
+          <ListItem
+            key={i}
+            index={i}
+            className='multi-select-box__item'
+            value={option}
+            selected={selected}
+            selectedIndexesCallback={()=>selectedIndexesCallback()}
+          />
+        );
+      });
+    }
+  }
+
+  const generateLabel =(options = [])=> {
+    let labelArray = [];
+    if (options.length > 0) {
+      for (let option of options) {
+        if (option.props.selected) {
+          labelArray.push(option.props.value);
+        }
+      }
+    }
+    return labelArray.length > 0 ? labelArray.join(', ') : dropDownLabel;
+  }
+
+
+  const options = getOptions();
+  const optionLabel = generateLabel(options);
+
+  let multiSelectNodes;
+    if (showMultiSelectBox) {
+      multiSelectNodes = options;
+    }
+
+console.log('optiondata',optionsData)
+console.log('optionvalue',optionsValue)
+console.log()
+
+
+  return(
+    <div className="">
+        <div
+          className=""
+          onClick={()=>setShowMultiSelectBox(!showMultiSelectBox)}>
+          <span className="">{optionLabel}</span>
+        </div>
+        <section className="">
+          <ul>
+            {multiSelectNodes}
+          </ul>
+        </section>
+      </div>
   );
 }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { Form, TextField, SelectField, SubmitButton } from "./FormElements";
+import { Form, TextField, SelectField, SubmitButton, MultiSelectField } from "./FormElements";
 import * as Yup from "yup";
 
 const formSchema = {
@@ -30,6 +30,14 @@ const formSchema = {
     ],
   },
 };
+
+const optiondata= [
+  'Sydney',
+  'Melbourne',
+  'Brisbane',
+  'Perth',
+  'Adelaide'
+];
 
 function App() {
   const [formData, setFormData] = useState({});
@@ -100,6 +108,7 @@ function App() {
 
         <SubmitButton title="Submit" />
       </Form>
+      <MultiSelectField dropDownLabel="MultiSelect" optionsData={optiondata}/>
     </div>
   );
 }
