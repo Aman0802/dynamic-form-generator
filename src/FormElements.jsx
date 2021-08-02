@@ -9,6 +9,8 @@ import {
   useFormik,
 } from "formik";
 
+import './FormElements.css'
+
 export function Form(props) {
   return (
     <Formik {...props}>
@@ -162,6 +164,7 @@ export function MultiSelectField(props) {
 }
 
 export function MultiSelect(props) {
+  const {label}=props;
   const [searchText, setSearchText] = useState("");
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -207,53 +210,38 @@ export function MultiSelect(props) {
   };
 
   return (
-    <>
+    <div className="multiselect-container">
       <div
-        style={{ cursor: "pointer" }}
+        className="multiselect"
         onClick={() => setIsSelectOpen(!isSelectOpen)}
       >
-        <input type="text" value={searchText} onChange={handleChange} />
-      </div>
-
-      {selectedOptions &&
-        selectedOptions?.map((selectedOption) => (
+        {selectedOptions &&
+        (<div className="selected-options">
+          {selectedOptions?.map((selectedOption) => (
           <span
-            style={{
-              paddingRight: "2px",
-              paddingLeft: "2px",
-              marginRight: "5px",
-              listStyleType: "none",
-              backgroundColor: "#52c5da",
-            }}
+            className="selected-option"
           >
             {selectedOption.value}
             <span
-              style={{
-                paddingLeft: "10px",
-                paddingRight: "5px",
-                cursor: "pointer",
-              }}
+              className="cross-btn"
               onClick={() => removeOption(selectedOption)}
             >
               x
             </span>
           </span>
         ))}
+        </div>)
+        }
+        <input type="text" className="multiselect-input" value={searchText} onChange={handleChange}  placeholder={label}/>
+      </div>
       {isSelectOpen && (
         <div
-          style={{
-            padding: "10px",
-            maxWidth: "100px",
-            borderRadius: "20px",
-            boxShadow: "0 7px 30px -10px rgba(150,170,180,0.5)",
-          }}
+          className="multiselect-dropdown"
         >
-          <ul style={{ cursor: "pointer", padding: "0" }}>
+          <ul className="list">
             {visibleOptions?.map((option) => (
               <li
-                style={{
-                  listStyleType: "none",
-                }}
+                className="list-item"
                 onClick={() => addOption(option)}
               >
                 {option.value}
@@ -262,7 +250,7 @@ export function MultiSelect(props) {
           </ul>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
