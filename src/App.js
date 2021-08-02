@@ -111,7 +111,7 @@ function App() {
       </Form>
       {/* <MultiSelectField dropDownLabel="MultiSelect" optionsData={optiondata} /> */}
       <div style={{ width: "max-content", marginLeft: "25px" }}>
-        <MultiSelect />
+        <MultiSelect label="Colors"/>
       </div>
     </div>
   );
