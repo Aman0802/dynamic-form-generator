@@ -9,7 +9,7 @@ import {
   useFormik,
 } from "formik";
 
-import './FormElements.css'
+import "./FormElements.css";
 
 export function Form(props) {
   return (
@@ -82,7 +82,7 @@ function ListItem(props) {
 }
 
 export function MultiSelect(props) {
-  const {label}=props;
+  const { placeholder } = props;
   const [searchText, setSearchText] = useState("");
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -99,12 +99,14 @@ export function MultiSelect(props) {
   const [visibleOptions, setVisibleOptions] = useState(options);
 
   const addOption = (optionToAdd) => {
-    setOptions(options.filter((option) => option.id !== optionToAdd.id));
-    setSelectedOptions([...selectedOptions, optionToAdd]);
+    const isRepeated =
+      selectedOptions.filter(
+        (selectedOption) => selectedOption.id === optionToAdd.id
+      ).length >= 1;
+    !isRepeated && setSelectedOptions([...selectedOptions, optionToAdd]);
   };
 
   const removeOption = (option) => {
-    setOptions([...options, option]);
     setSelectedOptions(
       selectedOptions.filter(
         (selectedOption) => selectedOption.id !== option.id
@@ -112,18 +114,17 @@ export function MultiSelect(props) {
     );
   };
 
-  const filterOptions = (options, searchText) => {
+  const filterOptions = (optionsToFilter, searchText) => {
     if (!searchText) {
-      return options;
+      return optionsToFilter;
     }
-    return options.filter((option) =>
-      option.value.toLowerCase().includes(searchText)
+    return optionsToFilter.filter((optionToSearch) =>
+      optionToSearch.value.toLowerCase().includes(searchText)
     );
   };
 
   const handleChange = (e) => {
     setSearchText(e.target.value);
-    console.log(filterOptions(options, e.target.value));
     setVisibleOptions(filterOptions(options, e.target.value));
   };
 
@@ -131,37 +132,45 @@ export function MultiSelect(props) {
     <div className="multiselect-container">
       <div
         className="multiselect"
-        onClick={() => setIsSelectOpen(!isSelectOpen)}
+        // onClick={() => setIsSelectOpen(!isSelectOpen)}
       >
-        {selectedOptions &&
-        (<div className="selected-options">
-          {selectedOptions?.map((selectedOption) => (
-          <span
-            className="selected-option"
-          >
-            {selectedOption.value}
-            <span
-              className="cross-btn"
-              onClick={() => removeOption(selectedOption)}
-            >
-              x
-            </span>
-          </span>
-        ))}
-        </div>)
-        }
-        <input type="text" className="multiselect-input" value={searchText} onChange={handleChange}  placeholder={label}/>
+        {selectedOptions && (
+          <div className="selected-options">
+            {selectedOptions?.map((selectedOption) => (
+              <span className="selected-option">
+                {selectedOption.value}
+                <span
+                  className="cross-btn"
+                  onClick={() => removeOption(selectedOption)}
+                >
+                  x
+                </span>
+              </span>
+            ))}
+          </div>
+        )}
+        <input
+          type="text"
+          className="multiselect-input"
+          value={searchText}
+          onChange={handleChange}
+          onFocus={() => setIsSelectOpen(true)}
+          onBlur={() => setIsSelectOpen(false)}
+          placeholder={placeholder}
+        />
+        <button
+          onClick={() => setIsSelectOpen(!isSelectOpen)}
+          onFocus={() => setIsSelectOpen(true)}
+          onBlur={() => setIsSelectOpen(false)}
+        >
+          v
+        </button>
       </div>
       {isSelectOpen && (
-        <div
-          className="multiselect-dropdown"
-        >
+        <div className="multiselect-dropdown">
           <ul className="list">
             {visibleOptions?.map((option) => (
-              <li
-                className="list-item"
-                onClick={() => addOption(option)}
-              >
+              <li className="list-item" onClick={() => addOption(option)}>
                 {option.value}
               </li>
             ))}
